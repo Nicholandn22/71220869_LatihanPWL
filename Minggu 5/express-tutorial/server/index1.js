@@ -194,64 +194,87 @@ const pool = mysql.createPool({
 //   }
 // );
 
-// put update
+// PUT update dengan validasi
 app.put(
-  "/:id",
-  [
-    body("title")
-      .isString()
-      .withMessage("Title must be a string") // Memastikan title adalah string
-      .notEmpty()
-      .withMessage("Title is required") // Validasi agar tidak kosong
-      .matches(/^[A-Za-z\s]+$/)
-      .withMessage("Title can only contain letters and spaces"), // Validasi agar hanya huruf dan spasi
-    body("genre").notEmpty().withMessage("Genre is required"), // Validasi genre dari body
-    body("release_year")
-      .isInt({ min: 1888, max: 2024 })
-      .withMessage("Release year must be between 1888 and 2024"), // Validasi release_year dari body
-  ],
+  "/movies/:id",
   jsonParser,
+  [
+    // Validasi title
+    body("title").notEmpty().withMessage("Title tidak boleh kosong"),
+
+    // Validasi genre
+    body("genre").notEmpty().withMessage("Genre tidak boleh kosong"),
+
+    // Validasi release_year
+    body("release_year")
+      .isInt({ min: 1888, max: new Date().getFullYear() })
+      .withMessage(
+        `Tahun harus di antara 1888 sampai ${new Date().getFullYear()}`
+      ),
+  ],
   (req, res) => {
-    // Mengecek hasil validasi
+    // Cek validasi request body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() }); // Return jika ada error validasi
+      console.log("ERROR:", errors.array());
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const { id } = req.params; // Ambil id dari parameter URL
-    const params = req.body; // Ambil data dari body request
+    const { id } = req.params;
+    const { title, genre, release_year } = req.body;
+
+    console.log("Masukkan data untuk update MOVIES:", {
+      id,
+      title,
+      genre,
+      release_year,
+    });
 
     pool.getConnection((err, connection) => {
       if (err) {
-        return res.status(500).json({ error: "Error connecting to database" });
+        console.log("DB ERROR:", err);
+        return res.status(500).json({ error: "Tidak bisa konek ke db" });
       }
 
-      // Membuat query dynamic
-      const fields = [];
-      const values = [];
-      for (const key in params) {
-        fields.push(`${key} = ?`);
-        values.push(params[key]);
-      }
-
-      const query = `UPDATE movies SET ${fields.join(", ")} WHERE id = ?`;
-      values.push(Number(id));
-
-      // Menjalankan query update
-      connection.query(query, values, (err, rows) => {
-        connection.release(); // Kembalikan koneksi ke pool
+      // Cek apakah movie dengan ID tersebut ada
+      const findQuery = "SELECT * FROM movies WHERE id = ?";
+      connection.query(findQuery, [id], (err, results) => {
         if (err) {
+          console.log("Error query:", err);
+          connection.release();
           return res.status(500).json({ error: err.message });
         }
-        if (rows.affectedRows === 0) {
-          return res.status(404).json({ error: "Movie not found" }); // Jika tidak ada data yang diupdate
+
+        if (results.length === 0) {
+          console.log("Movie tidak ada yang memiliki id:", id);
+          connection.release();
+          return res.status(404).json({ error: "Film tida ditemukan" });
         }
-        res.status(200).json({ data: rows });
+
+        // Lakukan update jika film ditemukan
+        const updateQuery =
+          "UPDATE movies SET title = ?, genre = ?, release_year = ? WHERE id = ?";
+        connection.query(
+          updateQuery,
+          [title, genre, release_year, id],
+          (err, result) => {
+            connection.release();
+            if (err) {
+              console.log("ERROR update:", err);
+              return res.status(500).json({ error: err.message });
+            }
+
+            console.log("Update untuk film dgn id:", id);
+            res.status(200).json({
+              message: "Update berhasi;",
+              data: { id, title, genre, release_year },
+            });
+          }
+        );
       });
     });
   }
 );
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

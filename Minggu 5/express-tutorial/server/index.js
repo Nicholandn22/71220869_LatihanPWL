@@ -21,77 +21,73 @@ app.put(
   jsonParser,
   [
     // Validasi title
-    body("title").notEmpty().withMessage("Title is required"),
+    body("title").notEmpty().withMessage("Title tidak boleh kosong"),
 
     // Validasi genre
-    body("genre")
-      .isString()
-      .withMessage("Genre must be a string")
-      .notEmpty()
-      .withMessage("Genre is required"),
+    body("genre").notEmpty().withMessage("Genre tidak boleh kosong"),
 
     // Validasi release_year
     body("release_year")
       .isInt({ min: 1888, max: new Date().getFullYear() })
       .withMessage(
-        `Release year must be between 1888 and ${new Date().getFullYear()}`
+        `Tahun harus di antara 1888 sampai ${new Date().getFullYear()}`
       ),
   ],
   (req, res) => {
     // Cek validasi request body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log("Validation errors:", errors.array());
+      console.log("ERROR:", errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { id } = req.params;
     const { title, genre, release_year } = req.body;
 
-    console.log("Incoming PUT request to update movie:", {
+    console.log("Masukkan data untuk update MOVIES:", {
       id,
       title,
       genre,
       release_year,
     });
 
-    pool.getConnection((err, connection) => {
+    pool.getConnection((err, koneksi) => {
       if (err) {
-        console.log("Database connection error:", err);
-        return res.status(500).json({ error: "Error connecting to database" });
+        console.log("DB ERROR:", err);
+        return res.status(500).json({ error: "Tidak bisa konek ke db" });
       }
 
       // Cek apakah movie dengan ID tersebut ada
       const findQuery = "SELECT * FROM movies WHERE id = ?";
-      connection.query(findQuery, [id], (err, results) => {
+      koneksi.query(findQuery, [id], (err, results) => {
         if (err) {
-          console.log("Error in findQuery:", err);
-          connection.release();
+          console.log("Error query:", err);
+          koneksi.release();
           return res.status(500).json({ error: err.message });
         }
 
         if (results.length === 0) {
-          console.log("Movie not found for id:", id);
-          connection.release();
-          return res.status(404).json({ error: "Movie not found" });
+          console.log("Movie tidak ada yang memiliki id:", id);
+          koneksi.release();
+          return res.status(404).json({ error: "Film tida ditemukan" });
         }
 
         // Lakukan update jika film ditemukan
         const updateQuery =
           "UPDATE movies SET title = ?, genre = ?, release_year = ? WHERE id = ?";
-        connection.query(
+        koneksi.query(
           updateQuery,
           [title, genre, release_year, id],
           (err, result) => {
-            connection.release();
+            koneksi.release();
             if (err) {
-              console.log("Error during update:", err);
+              console.log("ERROR update:", err);
               return res.status(500).json({ error: err.message });
             }
 
-            console.log("Update success for movie ID:", id);
+            console.log("Update untuk film dgn id:", id);
             res.status(200).json({
-              message: "Movie updated successfully",
+              message: "Update berhasi;",
               data: { id, title, genre, release_year },
             });
           }
