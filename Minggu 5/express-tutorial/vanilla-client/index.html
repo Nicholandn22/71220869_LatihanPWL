@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PWL - Pengenalan API</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #b3e0ff; /* Warna latar belakang cerah */
+        font-family: "Comic Neue", cursive; /* Menggunakan font yang lucu */
+        margin: 0;
+        padding: 20px;
+        font-style: italic;
+      }
+
+      h1 {
+        text-align: center;
+        background-color: #e0ffff; /* Mengubah warna latar belakang untuk judul */
+        padding: 15px;
+        border-radius: 10px; /* Sudut melengkung */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Bayangan lembut */
+        font-size: 2.5em; /* Ukuran font judul */
+      }
+
+      h2 {
+        text-align: center;
+        background-color: #e0ffff; /* Mengubah warna latar belakang untuk subjudul */
+        padding: 10px;
+        border-radius: 10px; /* Sudut melengkung */
+        margin-top: 10px; /* Jarak atas subjudul */
+        font-size: 2em; /* Ukuran font subjudul */
+      }
+
+      #movies {
+        max-width: 800px;
+        margin: 20px auto; /* Membuat div movie center */
+        background-color: white; /* Latar belakang putih untuk form */
+        padding: 20px; /* Padding dalam box */
+        border-radius: 10px; /* Sudut melengkung pada form */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Bayangan lembut */
+      }
+
+      label {
+        display: block;
+        margin: 10px 0 5px; /* Jarak antar label dan input */
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px; /* Jarak bawah antar input */
+        border: 1px solid #ddd; /* Garis border */
+        border-radius: 5px; /* Sudut melengkung input */
+        transition: border-color 0.3s; /* Efek transisi border */
+      }
+
+      input:focus {
+        border-color: #8f4fff; /* Warna border saat fokus */
+        outline: none; /* Menghilangkan outline default */
+      }
+
+      button {
+        background-color: #8f4fff; /* Warna tombol */
+        color: white; /* Warna teks tombol */
+        padding: 10px 20px; /* Ubah padding untuk membuat tombol lebih lebar */
+        border: none; /* Menghilangkan border default */
+        border-radius: 5px; /* Sudut melengkung tombol */
+        cursor: pointer; /* Menunjukkan bahwa tombol dapat diklik */
+        transition: background-color 0.3s; /* Efek transisi latar belakang */
+        width: 100%; /* Membuat lebar tombol 100% untuk kolom tabel */
+        margin: 5px 0; /* Jarak antar tombol vertikal */
+      }
+
+      button:hover {
+        background-color: #724ab7; /* Warna saat hover */
+      }
+
+      table {
+        width: 100%; /* Mengatur lebar tabel 100% */
+        border-collapse: collapse; /* Menggabungkan border */
+        margin-top: 20px; /* Jarak atas tabel */
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd; /* Garis bawah */
+      }
+
+      th {
+        background-color: #e0ffff; /* Mengubah warna latar belakang header tabel */
+      }
+
+      tr:hover {
+        background-color: #f9f9f9; /* Efek hover pada baris tabel */
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>PWL - Pengenalan API</h1>
+    <h2>Movies</h2>
+    <div id="movies">
+      <form id="movieForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required /><br /><br />
+        <label for="release_year">Release Year:</label>
+        <input
+          type="number"
+          id="release_year"
+          name="release_year"
+          required
+        /><br /><br />
+        <label for="genre">Genre:</label>
+        <input type="text" id="genre" name="genre" required /><br /><br />
+        <label for="director">Director:</label>
+        <input type="text" id="director" name="director" required /><br /><br />
+        <label for="rating">Rating:</label>
+        <input
+          type="number"
+          step="0.1"
+          id="rating"
+          name="rating"
+          required
+        /><br /><br />
+        <button type="submit">Save</button>
+        <button type="button" id="cancelButton">Cancel</button>
+      </form>
+      <table border="1" id="movieTable">
+        <tr>
+          <th>Title</th>
+          <th>Release Year</th>
+          <th>Genre</th>
+          <th>Director</th>
+          <th>Rating</th>
+          <th>Action</th>
+        </tr>
+      </table>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
