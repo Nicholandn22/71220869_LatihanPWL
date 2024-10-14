@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Buku</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #b3e0ff; /* Warna latar belakang cerah */
+        font-family: "Comic Neue", cursive; /* Menggunakan font yang lucu */
+        margin: 0;
+        padding: 20px;
+        font-style: italic;
+      }
+
+      h1 {
+        text-align: center;
+        background-color: #e0ffff; /* Mengubah warna latar belakang untuk judul */
+        padding: 15px;
+        border-radius: 10px; /* Sudut melengkung */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Bayangan lembut */
+        font-size: 2.5em; /* Ukuran font judul */
+      }
+
+      .detail-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff; /* Warna latar belakang untuk detail */
+        border-radius: 10px; /* Sudut melengkung */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Bayangan lembut */
+      }
+
+      .detail {
+        margin: 10px 0;
+      }
+
+      .back-button {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        background-color: #e0ffff; /* Warna tombol kembali */
+        padding: 10px;
+        border-radius: 5px; /* Sudut melengkung */
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="detail-container">
+      <div class="detail" id="bookDetail">
+        <!-- Detail buku akan ditampilkan di sini -->
+      </div>
+      <a href="main.html" class="back-button">Kembali</a>
+    </div>
+
+    <script>
+      // Fungsi untuk mendapatkan parameter dari URL
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      // Ambil ID buku dari URL
+      const bookId = getQueryParam("id");
+
+      // Ambil detail buku dari endpoint berdasarkan ID
+      fetch(`http://localhost:3000/${bookId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.data.length > 0) {
+            const book = data.data[0]; // Ambil buku pertama dari hasil
+            const bookDetail = `
+                        <h1>Detail Buku</h1>
+                        <p class="detail"><strong>Judul:</strong> ${book.judul}</p>
+                        <p class="detail"><strong>Pengarang:</strong> ${book.pengarang}</p>
+                        <p class="detail"><strong>Tahun Terbit:</strong> ${book.tahun_terbit}</p>
+                    `;
+            document.getElementById("bookDetail").innerHTML = bookDetail;
+          } else {
+            document.getElementById(
+              "bookDetail"
+            ).innerHTML = `<p>Buku tidak ada.</p>`;
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching book detail:", error);
+          document.getElementById(
+            "bookDetail"
+          ).innerHTML = `<p>errorrr.</p>`;
+        });
+    </script>
+  </body>
+</html>

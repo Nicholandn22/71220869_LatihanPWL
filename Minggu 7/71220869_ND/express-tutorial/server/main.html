@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Buku</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #b3e0ff; /* Warna latar belakang cerah */
+        font-family: "Comic Neue", cursive; /* Menggunakan font yang lucu */
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        background-color: #e0ffff; /* Mengubah warna latar belakang untuk judul */
+        padding: 15px;
+        border-radius: 10px; /* Sudut melengkung */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Bayangan lembut */
+        font-size: 2.5em; /* Ukuran font judul */
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 20px 0; /* Jarak atas dan bawah untuk ul */
+      }
+
+      li {
+        margin: 10px 0;
+        font-size: 1.2em;
+        background-color: #ffffff; /* Warna latar belakang untuk item daftar */
+        padding: 10px; /* Padding di dalam li */
+        border-radius: 5px; /* Sudut melengkung */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bayangan lembut */
+        transition: transform 0.2s; /* Transisi untuk efek hover */
+      }
+
+      li:hover {
+        transform: scale(1.02); /* Efek zoom saat hover */
+      }
+
+      button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        font-size: 0.9em;
+        background-color: #4caf50; /* Warna latar belakang tombol */
+        color: white; /* Warna teks tombol */
+        border: none; /* Menghapus border default */
+        border-radius: 5px; /* Sudut melengkung tombol */
+        cursor: pointer; /* Menunjukkan pointer saat hover */
+        transition: background-color 0.2s; /* Transisi untuk efek hover tombol */
+      }
+
+      button:hover {
+        background-color: #45a049; /* Warna saat hover tombol */
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Daftar Buku Milik ND</h1>
+    <ul id="book-list"></ul>
+    <table border="1">
+      <script>
+        // Ambil elemen ul untuk menampilkan daftar buku
+        const bookList = document.getElementById("book-list");
+
+        // Ambil data buku dari endpoint /buku
+        fetch("http://localhost:3000/buku")
+          .then((response) => response.json())
+          .then((data) => {
+            const books = data.data;
+
+            // Iterasi setiap buku dan tambahkan ke dalam ul sebagai list item
+            books.forEach((book) => {
+              const li = document.createElement("li"); // Buat elemen li
+              li.innerHTML = `${book.judul} oleh  <strong>${book.pengarang}</strong> (${book.tahun_terbit})`; // Menambahkan teks judul buku
+
+              const detailButton = document.createElement("button"); // Buat tombol detail
+              detailButton.textContent = "Detail";
+              detailButton.onclick = () => {
+                // Aksi ketika tombol detail diklik
+                window.location.href = `detail.html?id=${book.id}`; // Redirect ke halaman detail
+              };
+
+              li.appendChild(detailButton); // Tambahkan tombol ke li
+              bookList.appendChild(li); // Tambahkan li ke dalam ul
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching book data:", error);
+          });
+      </script>
+    </table>
+  </body>
+</html>
